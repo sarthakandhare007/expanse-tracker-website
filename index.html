@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker | Sarthak</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(-45deg, #f3c623, #f9a826, #fddb92, #d1fdff);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      transition: all 0.4s;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .navbar {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+    }
+
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: 1.5rem;
+    }
+
+    .nav-link {
+      color: #fff !important;
+      margin-right: 15px;
+      transition: 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #ffca28 !important;
+      transform: scale(1.05);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    th {
+      background-color: #007bff !important;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    .btn-gradient {
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      border: none;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .btn-gradient:hover {
+      background: linear-gradient(135deg, #00c6ff, #007bff);
+      transform: scale(1.05);
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 15px;
+      color: white;
+      font-size: 0.8rem;
+    }
+
+    .badge-Food { background: #ff7043; }
+    .badge-Shopping { background: #9c27b0; }
+    .badge-Travel { background: #00bcd4; }
+    .badge-Entertainment { background: #ff4081; }
+    .badge-Grosary { background: #8bc34a; }
+    .badge-Others { background: #9e9e9e; }
+
+    .delete-btn {
+      border: none;
+      background: #e53935;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .delete-btn:hover {
+      background: #c62828;
+      transform: scale(1.1);
+    }
+
+    .totals h5 {
+      font-weight: 600;
+      color: #212121;
+      margin: 10px 0;
+    }
+
+    .dark-mode {
+      background: #121212 !important;
+      color: #f5f5f5;
+    }
+
+    .dark-mode .card {
+      background: rgba(30,30,30,0.9);
+      color: white;
+    }
+
+    .dark-mode th {
+      background-color: #333 !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand"><i class="bi bi-wallet2"></i> Expense Tracker</a>
+      <div class="ms-auto d-flex align-items-center">
+        <a class="nav-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="#" id="downloadExcel"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+        <a class="nav-link" href="#" id="clearAll"><i class="bi bi-trash3"></i> Clear All</a>
+        <a class="nav-link" href="#" id="toggleTheme"><i class="bi bi-moon-stars"></i> Dark Mode</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Form -->
+    <div class="card p-4 mb-4 shadow-sm">
+      <form id="expense-form">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <input type="text" id="item" class="form-control" placeholder="Item name" required>
+          </div>
+          <div class="col-md-3">
+            <input type="number" id="amount" class="form-control" placeholder="Amount (₹)" required>
+          </div>
+          <div class="col-md-3">
+            <select id="category" class="form-select" required>
+              <option value="">Select Category</option>
+              <option>Food</option>
+              <option>Shopping</option>
+              <option>Travel</option>
+              <option>Entertainment</option>
+              <option>Grosary</option>
+              <option>Others</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <input type="date" id="date" class="form-control" required>
+          </div>
+        </div>
+        <div class="text-center mt-3">
+          <button type="submit" class="btn btn-gradient px-5 py-2"><i class="bi bi-plus-circle"></i> Add Expense</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Expense Table -->
+    <div class="card p-4 mb-4">
+      <h4 class="mb-3 text-primary"><i class="bi bi-list-ul"></i> Expense List</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Amount (₹)</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="expense-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <div class="text-center totals">
+      <h5>Today's Total: ₹<span id="daily-total">0</span></h5>
+      <h5>This Week: ₹<span id="weekly-total">0</span></h5>
+      <h5>This Month: ₹<span id="monthly-total">0</span></h5>
+    </div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    const body = document.body;
+
+    document.getElementById('expense-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const item = document.getElementById('item').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      const category = document.getElementById('category').value;
+      const date = document.getElementById('date').value;
+
+      const expense = { item, amount, category, date };
+      expenses.push(expense);
+      localStorage.setItem('expenses', JSON.stringify(expenses));
+
+      displayExpenses();
+      updateTotals();
+      this.reset();
+    });
+
+    function displayExpenses() {
+      const list = document.getElementById('expense-list');
+      list.innerHTML = '';
+
+      expenses.forEach((exp, index) => {
+        const badgeClass = "badge-" + exp.category;
+        const row = `
+          <tr>
+            <td>${exp.item}</td>
+            <td>₹${exp.amount.toFixed(2)}</td>
+            <td><span class="badge ${badgeClass}">${exp.category}</span></td>
+            <td>${exp.date}</td>
+            <td><button class="delete-btn" onclick="deleteExpense(${index})"><i class="bi bi-trash"></i></button></td>
+          </tr>
+        `;
+        list.innerHTML += row;
+      });
+    }
+
+    function deleteExpense(index) {
+      if (confirm("Delete this expense?")) {
+        expenses.splice(index, 1);
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+        displayExpenses();
+        updateTotals();
+      }
+    }
+
+    function updateTotals() {
+      const today = new Date().toISOString().split('T')[0];
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+
+      let daily = 0, weekly = 0, monthly = 0;
+      const currentMonth = new Date().getMonth();
+
+      expenses.forEach(exp => {
+        const expDate = new Date(exp.date);
+        if (exp.date === today) daily += exp.amount;
+        if (expDate >= weekAgo) weekly += exp.amount;
+        if (expDate.getMonth() === currentMonth) monthly += exp.amount;
+      });
+
+      document.getElementById('daily-total').innerText = daily.toFixed(2);
+      document.getElementById('weekly-total').innerText = weekly.toFixed(2);
+      document.getElementById('monthly-total').innerText = monthly.toFixed(2);
+    }
+
+    document.getElementById('clearAll').addEventListener('click', () => {
+      if (confirm("Are you sure you want to clear all data?")) {
+        expenses = [];
+        localStorage.removeItem('expenses');
+        displayExpenses();
+        updateTotals();
+      }
+    });
+
+    document.getElementById('toggleTheme').addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+    });
+
+    // ✅ Working Excel Export
+    document.getElementById('downloadExcel').addEventListener('click', () => {
+      if (expenses.length === 0) {
+        alert("No data to export!");
+        return;
+      }
+
+      // Create worksheet
+      const wsData = [
+        ["Item", "Amount (₹)", "Category", "Date"]
+      ];
+
+      expenses.forEach(exp => {
+        wsData.push([exp.item, exp.amount, exp.category, exp.date]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+
+      // ✅ Correct file download method
+      XLSX.writeFile(wb, "Sarthak_Expense_Tracker.xlsx");
+    });
+
+    displayExpenses();
+    updateTotals();
+  </script>
+</body>
+</html>
